@@ -2,14 +2,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useContext } from 'react';
 
+// Context Import 
 import { SettingsContext, SettingsProvider } from './context/SettingsContext';
+
+// Screens
+import AddRouteScreen from './screens/AddRouteScreen';
 import DetailScreen from './screens/DetailScreen';
+import EditRouteScreen from './screens/EditRouteScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 const Stack = createNativeStackNavigator();
-
 
 function AppNavigation() {
   const { isDarkMode } = useContext(SettingsContext);
@@ -41,6 +45,16 @@ function AppNavigation() {
           options={{ title: 'Route Details' }} 
         />
         <Stack.Screen 
+          name="AddRoute" 
+          component={AddRouteScreen} 
+          options={{ title: 'Add New Route' }} 
+        />
+        <Stack.Screen 
+          name="EditRoute" 
+          component={EditRouteScreen} 
+          options={{ title: 'Edit Shuttle Route' }} 
+        />
+        <Stack.Screen 
           name="Settings" 
           component={SettingsScreen} 
           options={{ title: 'App Settings' }} 
@@ -54,7 +68,6 @@ function AppNavigation() {
     </NavigationContainer>
   );
 }
-
 
 export default function App() {
   return (

@@ -3,9 +3,10 @@ import { StyleSheet, Switch, Text, View } from 'react-native';
 import { SettingsContext } from '../context/SettingsContext';
 
 export default function SettingsScreen() {
-  const { isMiles, setIsMiles, isDarkMode, setIsDarkMode } = useContext(SettingsContext);
+  // toggleMiles and toggleDarkMode Functions  import
+  const { isMiles, toggleMiles, isDarkMode, toggleDarkMode } = useContext(SettingsContext);
 
-  //  Local State for Notifications
+  // Local State for Notifications
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
   return (
@@ -23,7 +24,7 @@ export default function SettingsScreen() {
           trackColor={{ false: '#767577', true: '#1a73e8' }}
           thumbColor={isMiles ? '#fff' : '#f4f3f4'}
           value={isMiles}
-          onValueChange={(value) => setIsMiles(value)}
+          onValueChange={toggleMiles} // AsyncStorage Save  Function
         />
       </View>
 
@@ -36,11 +37,11 @@ export default function SettingsScreen() {
           trackColor={{ false: '#767577', true: '#1a73e8' }}
           thumbColor={isDarkMode ? '#fff' : '#f4f3f4'}
           value={isDarkMode}
-          onValueChange={(value) => setIsDarkMode(value)}
+          onValueChange={toggleDarkMode} // AsyncStorage Save  Function 
         />
       </View>
 
-      
+      {/* 3. Bus Arrival Alerts */}
       <View style={[styles.settingRow, { borderBottomColor: isDarkMode ? '#333' : '#eee' }]}>
         <View style={styles.textGroup}>
           <Text style={[styles.label, { color: isDarkMode ? '#ddd' : '#333' }]}>

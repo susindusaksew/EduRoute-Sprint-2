@@ -1,39 +1,101 @@
-import { useContext, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useContext, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { SettingsContext } from '../context/SettingsContext';
-import { ROUTE_DATA } from '../data/routesData';
+import { deleteRoute, fetchRoutes } from '../src/services/api';
 
 export default function HomeScreen({ navigation }) {
-  
   const { isDarkMode } = useContext(SettingsContext);
-  
-  // Search state
+
+  const [routes, setRoutes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredRoutes = ROUTE_DATA.filter((item) =>
-    item.routeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.stops.some(stop => stop.toLowerCase().includes(searchQuery.toLowerCase()))
+  useFocusEffect(
+    useCallback(() => {
+      loadRoutes();
+    }, [])
   );
+
+  const loadRoutes = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchRoutes();
+      setRoutes(data);
+    } catch (err) {
+      setError('Failed to load routes. Please check your internet connection.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteRoute = (id) => {
+    Alert.alert(
+      'Delete Route',
+      'Are you sure you want to delete this route?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteRoute(id);
+              setRoutes((prevRoutes) => prevRoutes.filter((item) => item.id !== id));
+              Alert.alert('Success', 'Route deleted successfully!');
+            } catch (err) {
+              Alert.alert('Error', 'Failed to delete route.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const filteredRoutes = routes.filter((item) => {
+    const routeNameMatch = item.routeName?.toLowerCase().includes(searchQuery.toLowerCase());
+    const stopsMatch = Array.isArray(item.stops)
+      ? item.stops.some((stop) => stop.toLowerCase().includes(searchQuery.toLowerCase()))
+      : false;
+    return routeNameMatch || stopsMatch;
+  });
 
   const renderRouteItem = ({ item }) => (
     <TouchableOpacity
       style={[
         styles.card,
-        { 
+        {
           backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
-          borderColor: isDarkMode ? '#555555' : '#000000' 
-        }
+          borderColor: isDarkMode ? '#555555' : '#e0e0e0',
+        },
       ]}
       onPress={() => navigation.navigate('Detail', { routeDetail: item })}
     >
-      <Text style={[styles.cardTitle, { color: isDarkMode ? '#64b5f6' : '#0d47a1' }]}>
-        {item.routeName}
-      </Text>
+      <View style={styles.cardHeader}>
+        <Text style={[styles.cardTitle, { color: isDarkMode ? '#64b5f6' : '#0d47a1' }]}>
+          {item.routeName}
+        </Text>
+        <TouchableOpacity onPress={() => handleDeleteRoute(item.id)}>
+          <Text style={styles.deleteIcon}>🗑️</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={[styles.cardSub, { color: isDarkMode ? '#cccccc' : '#222222' }]}>
         Departure: {item.departureTime}
       </Text>
       <Text style={[styles.cardFee, { color: isDarkMode ? '#81c784' : '#1b5e20' }]}>
-        Fee: {item.monthlyFee}
+        Fee: {item.fee || item.monthlyFee}
       </Text>
     </TouchableOpacity>
   );
@@ -43,11 +105,11 @@ export default function HomeScreen({ navigation }) {
       <TextInput
         style={[
           styles.searchInput,
-          { 
+          {
             backgroundColor: isDarkMode ? '#1e1e1e' : '#ffffff',
             color: isDarkMode ? '#ffffff' : '#000000',
-            borderColor: isDarkMode ? '#444444' : '#dddddd'
-          }
+            borderColor: isDarkMode ? '#444444' : '#dddddd',
+          },
         ]}
         placeholder="Search route or stop name..."
         placeholderTextColor={isDarkMode ? '#aaaaaa' : '#888888'}
@@ -55,19 +117,43 @@ export default function HomeScreen({ navigation }) {
         onChangeText={(text) => setSearchQuery(text)}
       />
 
-      <FlatList
-        data={filteredRoutes}
-        keyExtractor={(item) => item.id}
-        renderItem={renderRouteItem}
-        ListEmptyComponent={
-          <Text style={[styles.emptyText, { color: isDarkMode ? '#aaaaaa' : '#888888' }]}>
-            No routes found.
+      <TouchableOpacity
+        style={styles.addBtn}
+        onPress={() => navigation.navigate('AddRoute')}
+      >
+        <Text style={styles.btnText}>➕ Add New Route</Text>
+      </TouchableOpacity>
+
+      {loading ? (
+        <View style={styles.centerState}>
+          <ActivityIndicator size="large" color="#1a73e8" />
+          <Text style={{ color: isDarkMode ? '#ffffff' : '#000000', marginTop: 10 }}>
+            Loading routes from MockAPI...
           </Text>
-        }
-      />
+        </View>
+      ) : error ? (
+        <View style={styles.centerState}>
+          <Text style={[styles.errorText, { color: '#d32f2f' }]}>{error}</Text>
+          <TouchableOpacity style={styles.retryBtn} onPress={loadRoutes}>
+            <Text style={styles.btnText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredRoutes}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderRouteItem}
+          onRefresh={loadRoutes}
+          refreshing={loading}
+          ListEmptyComponent={
+            <Text style={[styles.emptyText, { color: isDarkMode ? '#aaaaaa' : '#888888' }]}>
+              No routes found.
+            </Text>
+          }
+        />
+      )}
 
       <View style={styles.buttonContainer}>
-        {/* Profile Button */}
         <TouchableOpacity
           style={[styles.btn, styles.profileBtn]}
           onPress={() => navigation.navigate('Profile')}
@@ -75,7 +161,6 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.btnText}>👤 Profile</Text>
         </TouchableOpacity>
 
-        {/* Settings Button */}
         <TouchableOpacity
           style={[styles.btn, styles.settingsBtn]}
           onPress={() => navigation.navigate('Settings')}
@@ -88,15 +173,22 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 16 
+  container: {
+    flex: 1,
+    padding: 16,
   },
   searchInput: {
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
-    marginBottom: 16,
+    marginBottom: 10,
+  },
+  addBtn: {
+    backgroundColor: '#2e7d32',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 14,
   },
   card: {
     padding: 16,
@@ -105,23 +197,49 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderWidth: 1,
   },
-  cardTitle: { 
-    fontSize: 16, 
-    fontWeight: 'bold' 
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  cardSub: { 
-    fontSize: 14, 
-    fontWeight: '600', 
-    marginTop: 4 
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    flex: 1,
   },
-  cardFee: { 
-    fontSize: 14, 
-    fontWeight: 'bold', 
-    marginTop: 4 
+  deleteIcon: {
+    fontSize: 18,
+    paddingLeft: 8,
   },
-  emptyText: { 
-    textAlign: 'center', 
-    marginTop: 20 
+  cardSub: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 6,
+  },
+  cardFee: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 4,
+  },
+  centerState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: 15,
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  retryBtn: {
+    backgroundColor: '#1a73e8',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 6,
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -135,15 +253,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
-  profileBtn: { 
-    backgroundColor: '#1a73e8' 
+  profileBtn: {
+    backgroundColor: '#1a73e8',
   },
-  settingsBtn: { 
-    backgroundColor: '#333333' 
+  settingsBtn: {
+    backgroundColor: '#333333',
   },
-  btnText: { 
-    color: '#ffffff', 
-    fontWeight: 'bold', 
-    fontSize: 15 
+  btnText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
 });

@@ -1,212 +1,331 @@
-# EduRoute - Student Shuttle & Route Finder App
+# 🚌 EduRoute – Student Shuttle & Route Finder App
 
-EduRoute is a mobile app developed with React Native and Expo to help university students find and check shuttle information more easily.
+**EduRoute** is a React Native mobile application developed to help university students easily find and manage student shuttle route information.
 
-The app allows students to search for available shuttle routes and view details such as departure times, stops, distance, monthly fees, vehicle numbers, and driver contact details.
+The application allows students to search for available shuttle routes and view important information such as departure times, stops, distance, monthly fees, vehicle numbers, and driver contact details.
 
-This project was developed for the **CSI2114 - Mobile Application Development Sprint 1 Assessment**.
-
----
-
-## Main Features
-
-### 1. Route Search and Listing
-
-The Home Screen shows the available university shuttle routes in a list.
-
-`FlatList` is used to display the routes so that users can scroll through them easily. A search bar is also available on the Home Screen.
-
-Users can search using either the route name or the name of a stop. This makes it easier to find a route when the user only knows the pickup location.
-
-If there are no matching routes, the app shows **"No routes found."**
+This project is the **Sprint 2 – Feature-Complete App** developed for the **CSI2114 – Mobile Application Development** module.
 
 ---
 
-### 2. Route Details
+##  Project Information
 
-Users can select a route from the Home Screen to open the Route Details Screen.
+| Item          | Details                                  |
+| ------------- | ---------------------------------------- |
+| Project Name  | EduRoute                                 |
+| Sprint        | Sprint 2 – Feature-Complete App          |
+| Module        | CSI2114 – Mobile Application Development |
+| Technology    | React Native                             |
+| Framework     | Expo                                     |
+| Backend       | MockAPI                                  |
+| Local Storage | AsyncStorage                             |
+| Navigation    | React Navigation                         |
+| Language      | JavaScript                               |
+| Platform      | Android                                  |
 
-The screen shows information about the selected route, including:
+---
+
+##  Project Objectives
+
+The main objectives of EduRoute Sprint 2 are:
+
+* Provide an easy way for students to find shuttle routes.
+* Integrate a REST API using MockAPI.
+* Implement CRUD operations for shuttle routes.
+* Store selected application data locally using AsyncStorage.
+* Provide search and filtering functionality.
+* Display detailed information about shuttle routes.
+* Provide student profile management.
+* Implement application settings and theme preferences.
+* Handle loading, empty, and error states.
+* Demonstrate a complete working React Native application.
+
+---
+
+# ✨ Features
+
+##  Home Screen
+
+The Home Screen provides students with an overview of available shuttle routes.
+
+Features include:
+
+* Display shuttle routes using `FlatList`
+* Search routes by route name
+* Search routes by stop name
+* Display route information
+* Navigate to the Route Details screen
+* Load route data from the REST API
+
+---
+
+##  Route Search
+
+Students can search for available routes using the search bar.
+
+The search functionality allows filtering based on:
+
+* Route name
+* Stop names
+
+The results are displayed dynamically using React Native's `FlatList`.
+
+---
+
+##  Route Details
+
+The Route Details screen displays detailed information about a selected shuttle route.
+
+Information includes:
 
 * Route name
 * Departure times
-* Monthly fee
-* Driver contact number
-* Vehicle number
 * Route stops
 * Total distance
-
-Users can also change the distance display between **kilometres (km)** and **miles (mi)** from the Settings Screen.
+* Monthly fee
+* Vehicle number
+* Driver contact details
 
 ---
 
-### 3. Application Settings
+# 🌐 REST API Integration – MockAPI
 
-The Settings Screen contains the main options that users can change.
+EduRoute Sprint 2 uses **MockAPI** as the REST API backend for managing shuttle route data.
 
-#### Distance Unit
+The application is connected to a MockAPI `routes` resource.
 
-Users can choose:
+### MockAPI Endpoint
 
-* Kilometres (km)
+```text
+https://6a8d3963baf2ac84246cd751.mockapi.io/api/v1/routes
+```
+
+API implementation is located in:
+
+```text
+services/api.js
+```
+
+## API Operations
+
+The application implements the following REST API operations:
+
+### GET – Fetch Routes
+
+Retrieves shuttle route data from MockAPI.
+
+```javascript
+fetchRoutes()
+```
+
+### POST – Add Route
+
+Creates a new shuttle route in the MockAPI resource.
+
+```javascript
+addRoute(newRoute)
+```
+
+### PUT – Update Route
+
+Updates an existing shuttle route using its ID.
+
+```javascript
+updateRoute(id, updatedRoute)
+```
+
+### DELETE – Delete Route
+
+Deletes an existing shuttle route using its ID.
+
+```javascript
+deleteRoute(id)
+```
+
+Therefore, the application implements:
+
+* ✅ GET
+* ✅ POST
+* ✅ PUT
+* ✅ DELETE
+
+The API service also includes error handling using `try/catch` blocks and HTTP response status validation.
+
+---
+
+#  CRUD Functionality
+
+EduRoute implements CRUD functionality for shuttle routes.
+
+| Operation | Function        | Purpose                  |
+| --------- | --------------- | ------------------------ |
+| Create    | `addRoute()`    | Add a new shuttle route  |
+| Read      | `fetchRoutes()` | Retrieve shuttle routes  |
+| Update    | `updateRoute()` | Modify an existing route |
+| Delete    | `deleteRoute()` | Remove a route           |
+
+This allows the application to manage shuttle route data through the MockAPI backend.
+
+---
+
+#  Local Data Persistence
+
+EduRoute uses **AsyncStorage** to persist selected application data locally on the device.
+
+AsyncStorage is used to retain user/application preferences even after the application is closed and reopened.
+
+Local persistence is used for features such as:
+
+* Student profile information
+* Application settings
+* Distance unit preference
+* Theme preference
+* Shuttle arrival alert preference
+
+The application retrieves stored information when required and updates the stored values when the user changes their preferences.
+
+---
+
+#  Settings
+
+The Settings screen provides users with options to customize the application.
+
+Available settings include:
+
+###  Distance Unit
+
+Users can switch between:
+
+* Kilometers (km)
 * Miles (mi)
 
-The selected unit is used when displaying route distances.
+###  Theme
 
-#### Dark Mode
+Users can switch between:
 
-The app has both **Light Mode** and **Dark Mode**.
+* Light Mode
+* Dark Mode
 
-The selected theme is shared between the screens using the React Context API. This means the theme can be changed from the Settings Screen and used throughout the application.
+###  Shuttle Arrival Alerts
 
-#### Bus Arrival Alerts
+Users can enable or disable shuttle arrival notifications/alerts.
 
-Users can turn shuttle arrival alerts on or off from the Settings Screen.
-
-When the notification feature is enabled, the app can provide an alert five minutes before the scheduled shuttle arrival time.
-
----
-
-## 4. Student Profile
-
-The Profile Screen was designed to give students a place to manage their personal and shuttle-related information.
-
-Users can view and update:
-
-* Name
-* Student ID
-* Gender
-* Phone number
-* Email
-* Shuttle route
-* Pickup stop
-
-### Profile Features
-
-#### Edit Mode
-
-The Profile Screen has an Edit Mode that allows users to change their details.
-
-The `isEditing` state is used to control whether the profile is being edited. When editing starts, the current profile information is loaded into the form so the user can review it before making changes.
-
-#### Gender Selection
-
-Users can select their gender using the Boy and Girl buttons.
-
-The selected gender is also used to change the profile avatar.
-
-#### Dynamic Avatar
-
-The profile avatar changes when the user changes the gender selection.
-
-Both the avatar emoji and its background are updated to match the selected option.
-
-#### Profile Data and Context
-
-The Profile Screen uses `useContext` to work with the `SettingsContext`.
-
-The context provides information such as:
-
-* `userProfile`
-* `isDarkMode`
-* `updateUserProfile()`
-
-This allows the profile information and application settings to be shared without passing the same data between every screen.
-
-#### Digital Bus Pass
-
-A digital bus pass section is included in the Profile Screen.
-
-It shows information such as the current pass status and payment status. For example, an active pass can be shown as **ACTIVE **.
-
-#### Quick Statistics
-
-The Profile Screen also contains a small statistics section.
-
-It can show:
-
-* Attendance percentage
-* Total trips taken
-* Verification status
-
-These details give the student a quick overview without having to open another screen.
-
-#### Light and Dark Mode
-
-The Profile Screen follows the theme selected by the user.
-
-When Dark Mode is enabled, the background, text, input fields, cards, borders, and other interface elements are changed to suit the dark theme.
-
-The same screen also works in Light Mode with lighter backgrounds and colours.
-
-#### Profile Update Feedback
-
-After the user successfully updates the profile, `Alert.alert()` is used to show a confirmation message.
-
-This lets the user know that the changes have been saved successfully.
-
-#### Scrollable Profile
-
-The profile page uses `ScrollView` so that all the information and input fields can be accessed easily, especially on smaller screens.
+Settings are managed using the **React Context API** and persisted using **AsyncStorage**.
 
 ---
 
-## Profile Screen Code Structure
+#  Context API
 
-The main Profile Screen functionality is contained in `ProfileScreen.js`.
+EduRoute uses React Context API for centralized application settings management.
 
-| Feature          | Used In The Application                                     |
-| ---------------- | ----------------------------------------------------------- |
-| State management | `useState` is used for form values and Edit Mode            |
-| Context          | `SettingsContext` is used for shared profile and theme data |
-| Profile editing  | `isEditing` controls the editing section                    |
-| Gender selection | Buttons update the selected gender and avatar               |
-| Bus pass         | Displays pass and payment information                       |
-| Quick statistics | Shows attendance, trips, and verification details           |
-| Theme            | `isDarkMode` changes the screen appearance                  |
-| Feedback         | `Alert.alert()` shows the update confirmation               |
-| Scrolling        | `ScrollView` contains the profile content                   |
-| User input       | `TextInput` is used for editable information                |
-| Buttons          | `TouchableOpacity` is used for profile actions              |
+The context file is:
 
----
+```text
+context/SettingsContext.js
+```
 
-## Technologies Used
+The `SettingsContext` manages shared settings such as:
 
-* **React Native** - Used to create the mobile application
-* **Expo** - Used to run and test the application
-* **JavaScript** - Main programming language
-* **React Navigation** - Used to move between application screens
-* **React Context API** - Used to share profile and application settings
-* **AsyncStorage** - Used for local data storage
-* **useState** - Used to manage component state
-* **useEffect** - Used when side effects are required
-* **useContext** - Used to access shared context values
-* **FlatList** - Used to display the shuttle route list
-* **ScrollView** - Used for scrollable content
-* **Switch** - Used for settings controls
-* **TextInput** - Used for search and profile input
-* **TouchableOpacity** - Used for interactive buttons
-* **Alert** - Used to show user feedback
-* **View and Text** - Used to create the interface
+* Distance unit
+* Theme
+* Shuttle alerts
+* Persistent settings
+
+This avoids unnecessary prop drilling between multiple screens.
 
 ---
 
-## Application Structure
+#  Student Profile
 
-The project is divided into different folders to keep the code easier to manage.
+The Student Profile screen allows users to manage their profile information.
 
-The **screens** folder contains the main screens. Shuttle route information is kept in the **data** folder, while shared settings and profile information are handled through the **context** folder.
+Features include:
 
-React Navigation is used for screen navigation.
-
-The `SettingsContext` is used to share values such as the selected theme, distance unit, and student profile.
-
-The Profile Screen accesses these shared values using `useContext`.
+* Student profile information
+* Edit profile
+* Gender selection
+* Dynamic avatar
+* Profile theme changes
+* Digital bus pass
+* Quick statistics
 
 ---
 
-## Project Structure
+#  Digital Bus Pass
+
+The application provides a digital bus pass section for students.
+
+The pass can display relevant student information and can be used as a digital representation of the student's shuttle pass.
+
+---
+
+#  Dynamic Profile Customization
+
+The profile screen provides gender selection buttons.
+
+The selected gender changes the profile avatar and visual appearance.
+
+Example profile themes include:
+
+* Male profile
+* Female profile
+
+The profile UI updates dynamically based on the selected option.
+
+---
+
+#  Loading, Empty & Error States
+
+The application includes appropriate handling for different API states.
+
+### Loading State
+
+A loading indicator is displayed while route data is being retrieved from the API.
+
+### Empty State
+
+If no routes are available or no routes match the search criteria, an appropriate empty-state message is displayed.
+
+### Error State
+
+If an API request fails, the application handles the error and provides appropriate feedback to the user.
+
+API errors are handled in the API service using:
+
+```javascript
+try {
+  // API request
+} catch (error) {
+  // Error handling
+}
+```
+
+HTTP response status is also checked using:
+
+```javascript
+if (!response.ok) {
+  throw new Error(...);
+}
+```
+
+---
+
+#  Navigation
+
+EduRoute uses **React Navigation** to move between application screens.
+
+Main screens include:
+
+* Home Screen
+* Route Details Screen
+* Settings Screen
+* Student Profile Screen
+
+Navigation allows users to move between screens easily and return to previous screens when required.
+
+---
+
+# 🗂️ Project Structure
 
 ```text
 EDUROUTE/
@@ -231,6 +350,9 @@ EDUROUTE/
 │   ├── SettingsScreen.js
 │   └── ProfileScreen.js
 │
+├── services/
+│   └── api.js
+│
 ├── scripts/
 │   └── reset-project.js
 │
@@ -249,50 +371,149 @@ EDUROUTE/
 
 ---
 
-## Important Files
-
-### `HomeScreen.js`
-
-Displays the available shuttle routes and handles route searching.
-
-### `DetailScreen.js`
-
-Shows the information for the route selected by the user.
-
-### `SettingsScreen.js`
-
-Contains the distance unit, theme, and notification settings.
-
-### `ProfileScreen.js`
-
-Handles student profile information, editing, gender selection, the digital bus pass, quick statistics, and theme changes.
-
-### `SettingsContext.js`
-
-Contains shared application and profile information that is used by different screens.
-
-### `routesData.js`
-
-Contains the sample shuttle routes used in the application.
+#  Main Files and Folders
 
 ### `App.js`
 
-Sets up the main application and navigation between the screens.
+Main entry point of the React Native application.
+
+Responsible for:
+
+* Application initialization
+* Navigation setup
+* Context provider integration
+
+### `screens/`
+
+Contains the main application screens.
+
+* `HomeScreen.js` – Displays and searches shuttle routes.
+* `DetailScreen.js` – Displays detailed route information.
+* `SettingsScreen.js` – Manages application settings.
+* `ProfileScreen.js` – Displays and manages student profile information.
+
+### `services/api.js`
+
+Contains all REST API functions used to communicate with MockAPI.
+
+Implemented operations:
+
+* GET
+* POST
+* PUT
+* DELETE
+
+### `context/SettingsContext.js`
+
+Manages shared application settings using React Context API.
+
+### `data/routesData.js`
+
+Contains route-related data used by the application where applicable.
+
+### `assets/screenshots/`
+
+Contains screenshots used to document the application interface.
 
 ---
 
-## Getting Started
+#  Application Screenshots
 
-### 1. Clone the Repository
+## Home Screen
 
-Clone the project from GitHub and open the folder in Visual Studio Code.
+![Home Screen](assets/screenshots/home.png)
+
+The Home Screen displays available shuttle routes and provides route search functionality.
+
+---
+
+## Route Details
+
+![Route Details](assets/screenshots/detail.png)
+
+The Route Details screen displays complete information about a selected shuttle route.
+
+---
+
+## Settings
+
+![Settings Screen](assets/screenshots/settings.png)
+
+The Settings screen allows users to manage application preferences.
+
+---
+
+## Student Profile
+
+![Profile Screen](assets/screenshots/profile.png)
+
+The Profile screen provides student profile information, customization options, and digital bus pass functionality.
+
+---
+
+## QR Code / Digital Bus Pass
+
+![QR Code](assets/screenshots/qrcode.png)
+
+The application includes a digital bus pass / QR code feature for students.
+
+---
+
+#  Technologies Used
+
+### Frontend
+
+* React Native
+* Expo
+* JavaScript
+* React Hooks
+* React Navigation
+* FlatList
+
+### Backend / API
+
+* MockAPI
+* REST API
+* Fetch API
+
+### Local Storage
+
+* AsyncStorage
+
+### State Management
+
+* React `useState`
+* React Context API
+
+### Development Tools
+
+* Visual Studio Code
+* Node.js
+* npm
+* Expo CLI
+* Android
+
+---
+
+#  Installation
+
+## 1. Clone the Repository
+
+Clone the Sprint 2 repository from GitHub.
 
 ```bash
-git clone https://github.com/susindusaksew/EduRoute.git
-cd EduRoute
+git clone https://github.com/susindusaksew/EduRoute-Sprint-2.git
 ```
 
-### 2. Install Dependencies
+Navigate into the project:
+
+```bash
+cd EduRoute-Sprint-2
+```
+
+---
+
+## 2. Install Dependencies
 
 Run:
 
@@ -300,112 +521,131 @@ Run:
 npm install
 ```
 
-If AsyncStorage is not already installed, run:
+---
+
+## 3. Start the Expo Development Server
+
+Run:
 
 ```bash
-npx expo install @react-native-async-storage/async-storage
+npx expo start
 ```
 
-### 3. Start the Application
+After starting Expo, the application can be opened using:
 
-Start the Expo development server:
+* Expo Go
+* Android Emulator
+* Android device
+
+---
+
+#  Android Build
+
+An Android APK can be generated using Expo/EAS build tools.
+
+Example:
 
 ```bash
-npx expo start -c
+eas build --platform android
 ```
 
-After the server starts, the application can be opened using **Expo Go** or an Android emulator.
+The generated APK can be used for the Sprint 2 submission and demonstration.
 
 ---
 
-## Sprint 1 Objectives
+# Sprint Repositories
 
-The main goal of Sprint 1 was to build the basic structure of the EduRoute app and implement the main features needed for the prototype.
+EduRoute was developed across two sprint repositories.
 
-The project demonstrates:
+### Sprint 1
 
-* Multiple application screens
-* Screen navigation
-* Shuttle route listing
-* Route searching
-* `FlatList`
-* `useState`
-* `useEffect`
-* `useContext`
-* React Context API
-* AsyncStorage
-* Light and Dark Mode
-* Distance unit conversion
-* Student profile editing
-* Student ID management
-* Gender selection
-* Dynamic avatar
-* Digital bus pass information
-* Quick statistics
-* User feedback with `Alert.alert()`
+**EduRoute – Sprint 1 Prototype**
 
----
-
-## Project Purpose
-
-The main idea of EduRoute is to make university shuttle information easier for students to find.
-
-Students may need to check the route, pickup stop, departure time, fee, distance, vehicle number, or driver contact details before travelling.
-
-Instead of looking for this information in different places, the app provides the main details in one place.
-
-The Profile Screen also gives students a way to manage their own information and check shuttle-related details such as their bus pass and travel statistics.
-
-This Sprint 1 version provides the basic structure that can be improved with more features in later development stages.
-
----
-
-## Project Details
-
-| Item                        | Details                                  |
-| --------------------------- | ---------------------------------------- |
-| **Application**             | EduRoute                                 |
-| **Module**                  | CSI2114 - Mobile Application Development |
-| **Assessment**              | Sprint 1 Assessment                      |
-| **Platform**                | Android                                  |
-| **Framework**               | React Native                             |
-| **Development Environment** | Expo                                     |
-| **Programming Language**    | JavaScript                               |
-
----
-
-## Screenshots
-
-### Home Screen and Route Details
-
-|                  Home Screen                  |                   Route Details                   |
-| :-------------------------------------------: | :-----------------------------------------------: |
-| ![Home Screen](./assets/screenshots/home.png) | ![Route Details](./assets/screenshots/detail.png) |
-
-### Settings and Student Profile
-
-|                    Settings Screen                    |                    Student Profile                   |
-| :---------------------------------------------------: | :--------------------------------------------------: |
-| ![Settings Screen](./assets/screenshots/settings.png) | ![Student Profile](./assets/screenshots/profile.png) |
-
-### Expo QR Code
-
-![Expo QR Code](./assets/screenshots/qrcode.png)
-
----
-
-## Repository
-
-The project source code is available on GitHub:
-
+```text
 https://github.com/susindusaksew/EduRoute
+```
+
+Sprint 1 focused on:
+
+* Navigation
+* Lists
+* Basic state management
+* Route search
+* Route details
+* Initial application prototype
+
+### Sprint 2
+
+**EduRoute – Sprint 2 Feature-Complete App**
+
+```text
+https://github.com/susindusaksew/EduRoute-Sprint-2
+```
+
+Sprint 2 extends the application with:
+
+* REST API integration
+* MockAPI
+* CRUD operations
+* AsyncStorage
+* Context API
+* Error handling
+* Loading states
+* Empty states
+* Enhanced profile and settings features
 
 ---
 
-## Notes
+# 🧪 Sprint 2 Requirements
 
-The current version uses sample shuttle route information stored locally in the project.
+The Sprint 2 application addresses the required assessment features.
 
-The Sprint 1 prototype focuses on the main application structure, route searching, navigation, route details, application settings, and student profile management.
+| Requirement         | Implementation            |
+| ------------------- | ------------------------- |
+| REST API            | MockAPI                   |
+| GET                 | Fetch shuttle routes      |
+| POST                | Add shuttle route         |
+| PUT                 | Update shuttle route      |
+| DELETE              | Delete shuttle route      |
+| Local Storage       | AsyncStorage              |
+| State Management    | React Hooks + Context API |
+| Loading State       | Implemented               |
+| Error Handling      | Implemented               |
+| Empty State         | Implemented               |
+| Navigation          | React Navigation          |
+| Working Android App | Expo / Android            |
 
-The project can be extended in future development stages with additional features related to students and university shuttle services.
+---
+
+#  Future Improvements
+
+Possible future improvements include:
+
+* Real-time GPS shuttle tracking
+* Push notifications
+* Online payment integration
+* Driver-side application
+* Student booking system
+* Route map integration
+* Firebase authentication
+* Real-time shuttle arrival information
+
+---
+
+#  Developer
+
+**EduRoute – Student Shuttle & Route Finder App**
+
+Developed as part of:
+
+**CSI2114 – Mobile Application Development**
+
+**Advanced Diploma of Computer Science**
+
+**ACBT / Middlesex University**
+
+---
+
+#  License
+
+This project was developed for educational and academic purposes as part of the CSI2114 Mobile Application Development module.
