@@ -327,8 +327,7 @@ Navigation allows users to move between screens easily and return to previous sc
 
 # 🗂️ Project Structure
 
-```text
-EDUROUTE/
+```EDUROUTE/
 │
 ├── assets/
 │   └── screenshots/
@@ -348,10 +347,13 @@ EDUROUTE/
 │   ├── HomeScreen.js
 │   ├── DetailScreen.js
 │   ├── SettingsScreen.js
-│   └── ProfileScreen.js
+│   ├── ProfileScreen.js
+│   ├── AddRouteScreen.js
+│   └── EditRouteScreen.js
 │
-├── services/
-│   └── api.js
+├── src/
+│   └── services/
+│       └── api.js
 │
 ├── scripts/
 │   └── reset-project.js
@@ -363,6 +365,7 @@ EDUROUTE/
 ├── .gitignore
 ├── App.js
 ├── app.json
+├── eas.json
 ├── package.json
 ├── package-lock.json
 ├── README.md
