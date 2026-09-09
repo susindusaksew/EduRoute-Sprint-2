@@ -1,4 +1,4 @@
-# 🚌 EduRoute – Student Shuttle & Route Finder App
+#  EduRoute – Student Shuttle & Route Finder App
 
 **EduRoute** is a React Native mobile application developed to help university students easily find and manage student shuttle route information.
 
@@ -599,7 +599,7 @@ Sprint 2 extends the application with:
 
 ---
 
-# 🧪 Sprint 2 Requirements
+#  Sprint 2 Requirements
 
 The Sprint 2 application addresses the required assessment features.
 
